@@ -43,20 +43,29 @@ public class MinioUtil {
                             .stream(file,size, -1)
                             .build()
             );
+        } catch (ErrorResponseException e) {
+            createBucket(bucketName);
+            uploadFile(file,size,bucketName,objectName);
         }
 
 
     }
 
     public void uploadFile(InputStream stream, long size, String bucket, String objectName, String contentType) throws Exception {
-        minioClient.putObject(
-                PutObjectArgs.builder()
-                        .bucket(bucket)
-                        .object(objectName)
-                        .stream(stream, size, -1)
-                        .contentType(contentType)
-                        .build()
-        );
+        try {
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucket)
+                            .object(objectName)
+                            .stream(stream, size, -1)
+                            .contentType(contentType)
+                            .build()
+            );
+        }
+        catch (ErrorResponseException e) {
+            createBucket(bucket);
+            uploadFile(stream, size, bucket, objectName, contentType);
+        }
     }
 
 
@@ -103,9 +112,9 @@ public class MinioUtil {
                           "Statement": [
                             {
                               "Effect": "Allow",
-                              "Principal": { "AWS": "*" },
+                              "Principal": { "AWS": ["*"] },
                               "Action": [ "s3:GetObject", "s3:PutObject" ],
-                              "Resource": [ "arn:aws:s3:::your-bucket-name/*" ]
+                              "Resource": [ "arn:aws:s3:::%s/*" ]
                             }
                           ]
                         }

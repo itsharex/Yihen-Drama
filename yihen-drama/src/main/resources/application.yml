@@ -3,20 +3,21 @@ server:
 
 spring:
   rabbitmq:
-    host: localhost
-    port: 5672
-    virtual-host: /
-    username: yihen
-    password: yihen0214
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    virtual-host: ${SPRING_RABBITMQ_VIRTUAL_HOST:/}
+    username: ${SPRING_RABBITMQ_USERNAME:yihen}
+    password: ${SPRING_RABBITMQ_PASSWORD:yihen0214}
     listener:
       simple:
         prefetch: 1 # 每次只能获取一条消息，处理完成才能获取下一个消息。解决消息堆积问题
   elasticsearch:
-    uris: http://localhost:9200
+    uris: ${SPRING_ELASTICSEARCH_URIS:http://localhost:9200}
   data:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:${SPRING_REDIS_HOST:localhost}}
       port: ${SPRING_DATA_REDIS_PORT:${SPRING_REDIS_PORT:6379}}
+      password: ${SPRING_DATA_REDIS_PASSWORD:${SPRING_REDIS_PASSWORD:}}
   servlet:
     multipart:
       max-file-size: 20MB
@@ -29,9 +30,9 @@ spring:
     time-zone: GMT+8
   datasource: # mysql数据库配置
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/YihenDrama?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
-    username: root
-    password: yihen0214
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/YihenDrama?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:yihen0214}
 
 logging:
   level:
@@ -39,9 +40,9 @@ logging:
 
 # minio配置
 minio:
-  access-key: minioadmin
-  end-point: http://127.0.0.1:9000
-  secret-key: minioadmin
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  end-point: ${MINIO_END_POINT:http://127.0.0.1:9000}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
 #用于打印框架生成的sql语句，便于调试
 mybatis-plus:
   configuration:
