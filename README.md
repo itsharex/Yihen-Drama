@@ -98,6 +98,7 @@ Yihen-Drama 是一个面向短剧创作的全流程平台，覆盖：
 ### 2.6 分镜管理
 
 - 生成分镜（按章节）
+- 生成分镜时可选“使用向量检索”（`usedVector`，默认关闭）
 - 分镜描述可编辑并保存
 - 删除单条分镜（确认弹窗）
 - 分镜关联角色（可搜索，可多选，限制最多 3 个）
@@ -126,10 +127,11 @@ Yihen-Drama 是一个面向短剧创作的全流程平台，覆盖：
 
 - 厂商管理（分页）
 - 模型实例管理（按类型分页）
-- 文本/文生图/视频/语音多类型管理
+- 文本/文生图/视频/语音/向量多类型管理
 - 设置默认实例（按类型）
 - 默认实例通过后端默认接口回显（不依赖前端临时字段）
 - 新增/更新实例参数映射（如 `max_token`）
+- 删除模型失败时展示后端原始错误信息（如“默认模型不可删除”）
 
 ![模型管理](./assets/image-20260224193838368.png)
 
@@ -227,6 +229,8 @@ docker compose -f docker-compose.full.yml up -d --build
 - RabbitMQ Console：`http://localhost:15672`
 - Elasticsearch：`http://localhost:9200`
 - Kibana：`http://localhost:5601`
+- Qdrant HTTP：`http://localhost:6333`
+- Qdrant gRPC：`localhost:6334`
 
 ---
 
@@ -251,6 +255,12 @@ ES 镜像已集成 IK + pinyin 插件（构建自动安装）。
 docker compose -f docker-compose.full.yml exec es elasticsearch-plugin list
 ```
 
+### 6.3 Qdrant 向量检索
+
+- 已接入 Qdrant 作为向量数据库（compose 已包含 `qdrant` 服务）
+- 章节内容在提取流程后会进入向量化入库链路（异步消息）
+- 分镜生成可通过前端开关决定是否使用向量检索增强上下文
+
 ---
 
 ## 7. 配置说明
@@ -264,6 +274,10 @@ docker compose -f docker-compose.full.yml exec es elasticsearch-plugin list
 - `SPRING_RABBITMQ_HOST/PORT/USERNAME/PASSWORD`
 - `SPRING_ELASTICSEARCH_URIS`
 - `MINIO_END_POINT/MINIO_ACCESS_KEY/MINIO_SECRET_KEY`
+- `QDRANT_HOST/QDRANT_PORT`
+- `QDRANT_COLLECTION_NAME/QDRANT_DIMENSION`
+- `QDRANT_MAX_SEGMENTSIZE_IN_TOKENS/QDRANT_MAX_OVERLAP_SIZE_IN_TOKENS`
+- `QDRANT_MAX_RESULT/QDRANT_MIN_SCORE`
 
 ---
 
